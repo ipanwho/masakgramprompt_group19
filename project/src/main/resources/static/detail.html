@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiment Detail — MasakGramPrompt</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .detail-card {
+            border: none;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            margin-bottom: 1.2rem;
+            overflow: hidden;
+        }
+        .detail-card .card-header {
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+            border-bottom: 1px solid rgba(99,102,241,0.12);
+            padding: 0.85rem 1.25rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .detail-card .card-header:hover {
+            background: linear-gradient(135deg, #eef0ff 0%, #e8ebff 100%);
+        }
+        .detail-card .card-header .icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-size: 0.85rem;
+        }
+        .detail-label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #6b7280;
+            letter-spacing: 0.03em;
+        }
+        .detail-value {
+            font-size: 0.92rem;
+            color: #1f2937;
+            word-break: break-all;
+        }
+        .detail-value a {
+            color: #6366f1;
+            text-decoration: none;
+        }
+        .detail-value a:hover {
+            text-decoration: underline;
+        }
+        .section-empty {
+            color: #9ca3af;
+            font-style: italic;
+            padding: 1rem;
+        }
+        .back-btn {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border: none;
+            color: #fff;
+            border-radius: 10px;
+            padding: 0.55rem 1.4rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .back-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(99,102,241,0.35);
+            color: #fff;
+        }
+        .ingredient-table th {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            color: #6b7280;
+            background: #f9fafb;
+        }
+        .ingredient-table td {
+            font-size: 0.85rem;
+        }
+        .loading-spinner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+            color: #6366f1;
+        }
+        .badge-rag {
+            font-size: 0.78rem;
+            padding: 0.3em 0.7em;
+        }
+        /* Compact inline field layout */
+        .compact-fields {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 1.5rem;
+            padding: 0.75rem 1rem;
+        }
+        .compact-field {
+            display: flex;
+            align-items: baseline;
+            gap: 0.4rem;
+        }
+        .compact-field .detail-label {
+            font-size: 0.7rem;
+            white-space: nowrap;
+        }
+        .compact-field .detail-value {
+            font-size: 0.88rem;
+        }
+        /* Comparison panel */
+        .comparison-panel {
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+        }
+        .comparison-panel .panel-header {
+            padding: 0.6rem 1rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        .comparison-panel.gt-panel .panel-header {
+            background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+            color: #065f46;
+        }
+        .comparison-panel.ai-panel .panel-header {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            color: #1e40af;
+        }
+        /* Evaluation summary stats */
+        .eval-stat {
+            text-align: center;
+            padding: 0.75rem;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+        }
+        .eval-stat .stat-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+        .eval-stat .stat-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #6b7280;
+            font-weight: 600;
+        }
+        /* View toggle tabs */
+        .view-toggle .btn {
+            font-size: 0.82rem;
+            padding: 0.35rem 0.9rem;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .view-toggle .btn.active {
+            background: #6366f1;
+            color: #fff;
+            border-color: #6366f1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid py-4 px-4" style="max-width: 1200px; margin: 0 auto;">
+
+        <!-- Header -->
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <a href="index.html" class="back-btn btn"><i class="fa-solid fa-arrow-left me-2"></i>Back to Experiments</a>
+            </div>
+            <h4 class="mb-0 fw-bold text-dark" id="pageTitle">
+                <i class="fa-solid fa-flask text-primary me-2"></i>Experiment Detail
+            </h4>
+        </div>
+
+        <!-- Loading state -->
+        <div id="loadingState" class="loading-spinner">
+            <i class="fa-solid fa-spinner fa-spin fa-2x mb-3"></i>
+            <span class="fw-medium">Loading experiment data...</span>
+        </div>
+
+        <!-- Error state -->
+        <div id="errorState" class="d-none">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <i class="fa-solid fa-circle-exclamation me-2"></i>
+                <span id="errorMessage">Error loading data.</span>
+            </div>
+        </div>
+
+        <!-- Detail content (hidden until loaded) -->
+        <div id="detailContent" class="d-none">
+
+            <!-- Evaluation Summary Card -->
+            <div class="detail-card card" id="sectionEvalSummary">
+                <div class="card-header" data-bs-toggle="collapse" data-bs-target="#collapseEvalSummary">
+                    <span><span class="icon" style="background: rgba(245,158,11,0.1); color: #f59e0b;"><i class="fa-solid fa-chart-pie"></i></span> Evaluation Summary</span>
+                    <i class="fa-solid fa-chevron-down text-muted"></i>
+                </div>
+                <div class="collapse show" id="collapseEvalSummary">
+                    <div class="card-body" id="evalSummaryBody">
+                        <div class="text-muted small">Loading evaluation data...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1. Experiment (compact) -->
+            <div class="detail-card card" id="sectionExperiment">
+                <div class="card-header" data-bs-toggle="collapse" data-bs-target="#collapseExperiment">
+                    <span><span class="icon bg-primary bg-opacity-10 text-primary"><i class="fa-solid fa-flask"></i></span> Experiment</span>
+                    <i class="fa-solid fa-chevron-down text-muted"></i>
+                </div>
+                <div class="collapse show" id="collapseExperiment">
+                    <div class="card-body p-0" id="experimentBody"></div>
+                </div>
+            </div>
+
+            <!-- 2. LLM Model (compact) -->
+            <div class="detail-card card" id="sectionLlmModel">
+                <div class="card-header" data-bs-toggle="collapse" data-bs-target="#collapseLlmModel">
+                    <span><span class="icon bg-success bg-opacity-10 text-success"><i class="fa-solid fa-robot"></i></span> LLM Model</span>
+                    <i class="fa-solid fa-chevron-down text-muted"></i>
+                </div>
+                <div class="collapse show" id="collapseLlmModel">
+                    <div class="card-body p-0" id="llmModelBody"></div>
+                </div>
+            </div>
+
+            <!-- 3. Prompt Technique (compact) -->
+            <div class="detail-card card" id="sectionPromptTechnique">
+                <div class="card-header" data-bs-toggle="collapse" data-bs-target="#collapsePromptTechnique">
+                    <span><span class="icon bg-warning bg-opacity-10 text-warning"><i class="fa-solid fa-wand-magic-sparkles"></i></span> Prompt Technique</span>
+                    <i class="fa-solid fa-chevron-down text-muted"></i>
+                </div>
+                <div class="collapse show" id="collapsePromptTechnique">
+                    <div class="card-body p-0" id="promptTechniqueBody"></div>
+                </div>
+            </div>
+
+            <!-- 4. Transcript (compact — no file path/format/dates) -->
+            <div class="detail-card card" id="sectionTranscript">
+                <div class="card-header" data-bs-toggle="collapse" data-bs-target="#collapseTranscript">
+                    <span><span class="icon bg-info bg-opacity-10 text-info"><i class="fa-solid fa-file-lines"></i></span> Transcript</span>
+                    <i class="fa-solid fa-chevron-down text-muted"></i>
+                </div>
+                <div class="collapse show" id="collapseTranscript">
+                    <div class="card-body p-0" id="transcriptBody"></div>
+                </div>
+            </div>
+
+            <!-- 5. Reel (compact) -->
+            <div class="detail-card card" id="sectionReel">
+                <div class="card-header" data-bs-toggle="collapse" data-bs-target="#collapseReel">
+                    <span><span class="icon bg-danger bg-opacity-10 text-danger"><i class="fa-brands fa-instagram"></i></span> Reel</span>
+                    <i class="fa-solid fa-chevron-down text-muted"></i>
+                </div>
+                <div class="collapse show" id="collapseReel">
+                    <div class="card-body p-0" id="reelBody"></div>
+                </div>
+            </div>
+
+            <!-- 6. Audio File (collapsed by default) -->
+            <div class="detail-card card" id="sectionAudioFile">
+                <div class="card-header" data-bs-toggle="collapse" data-bs-target="#collapseAudioFile">
+                    <span><span class="icon bg-secondary bg-opacity-10 text-secondary"><i class="fa-solid fa-headphones"></i></span> Audio File</span>
+                    <i class="fa-solid fa-chevron-down text-muted"></i>
+                </div>
+                <div class="collapse" id="collapseAudioFile">
+                    <div class="card-body p-0" id="audioFileBody"></div>
+                </div>
+            </div>
+
+            <!-- 7. Influencer (collapsed by default) -->
+            <div class="detail-card card" id="sectionInfluencer">
+                <div class="card-header" data-bs-toggle="collapse" data-bs-target="#collapseInfluencer">
+                    <span><span class="icon" style="background: rgba(236,72,153,0.1); color: #ec4899;"><i class="fa-solid fa-user-star"></i></span> Influencer</span>
+                    <i class="fa-solid fa-chevron-down text-muted"></i>
+                </div>
+                <div class="collapse" id="collapseInfluencer">
+                    <div class="card-body p-0" id="influencerBody"></div>
+                </div>
+            </div>
+
+            <!-- 8. Nutrition Results + Ingredients -->
+            <div class="detail-card card" id="sectionNutrition">
+                <div class="card-header" data-bs-toggle="collapse" data-bs-target="#collapseNutrition">
+                    <span><span class="icon" style="background: rgba(16,185,129,0.1); color: #10b981;"><i class="fa-solid fa-apple-whole"></i></span> Nutrition Results & Ingredients</span>
+                    <i class="fa-solid fa-chevron-down text-muted"></i>
+                </div>
+                <div class="collapse show" id="collapseNutrition">
+                    <div class="card-body p-0" id="nutritionBody"></div>
+                </div>
+            </div>
+
+            <!-- 9. Ground Truth vs AI Comparison -->
+            <div class="detail-card card" id="sectionComparison">
+                <div class="card-header" data-bs-toggle="collapse" data-bs-target="#collapseComparison">
+                    <span><span class="icon" style="background: rgba(139,92,246,0.1); color: #8b5cf6;"><i class="fa-solid fa-code-compare"></i></span> Ground Truth vs AI Comparison</span>
+                    <i class="fa-solid fa-chevron-down text-muted"></i>
+                </div>
+                <div class="collapse show" id="collapseComparison">
+                    <div class="card-body" id="comparisonBody">
+                        <div class="text-muted small text-center py-3">Loading comparison data...</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // --- Helpers ---
+        function fmt(val) {
+            if (val === null || val === undefined) return '<span class="text-muted">—</span>';
+            return val;
+        }
+        function fmtDate(val) {
+            if (!val) return '<span class="text-muted">—</span>';
+            try {
+                const d = new Date(val);
+                return d.toISOString().replace('T', ' ').substring(0, 19);
+            } catch(e) { return val; }
+        }
+        function fmtBool(val) {
+            if (val === true) return '<span class="badge bg-success badge-rag">Yes</span>';
+            if (val === false) return '<span class="badge bg-secondary badge-rag">No</span>';
+            return '<span class="text-muted">—</span>';
+        }
+        function fmtLink(url, text) {
+            if (!url) return '<span class="text-muted">—</span>';
+            return `<a href="${url}" target="_blank">${text || url} <i class="fa-solid fa-arrow-up-right-from-square ms-1" style="font-size:0.7rem"></i></a>`;
+        }
+        function compactField(label, value) {
+            return `<div class="compact-field"><span class="detail-label">${label}:</span><span class="detail-value">${value}</span></div>`;
+        }
+        function emptyMsg(entity) {
+            return `<div class="section-empty">No ${entity} data found for this experiment.</div>`;
+        }
+        function fmtNum(val) {
+            if (val === null || val === undefined) return '—';
+            return typeof val === 'number' ? val.toFixed(1) : val;
+        }
+
+        // --- Render sections (compact) ---
+        function renderExperiment(exp) {
+            if (!exp) { document.getElementById('experimentBody').innerHTML = emptyMsg('experiment'); return; }
+            let statusBadge = exp.status ? `<span class="badge bg-${exp.status === 'completed' ? 'success' : exp.status === 'failed' ? 'danger' : 'warning'}">${exp.status}</span>` : fmt(null);
+            document.getElementById('experimentBody').innerHTML = `<div class="compact-fields">
+                ${compactField('ID', fmt(exp.experimentId))}
+                ${compactField('Model', `<strong>${fmt(exp.modelName)}</strong>`)}
+                ${compactField('Technique', fmt(exp.promptTechnique))}
+                ${compactField('Status', statusBadge)}
+                ${compactField('RAG', fmtBool(exp.ragEnabled))}
+                ${compactField('Executed', fmtDate(exp.executedAt))}
+            </div>`;
+        }
+
+        function renderLlmModel(model) {
+            if (!model) { document.getElementById('llmModelBody').innerHTML = emptyMsg('LLM model'); return; }
+            document.getElementById('llmModelBody').innerHTML = `<div class="compact-fields">
+                ${compactField('Name', `<strong>${fmt(model.modelName)}</strong>`)}
+                ${compactField('Tag', `<code>${fmt(model.modelTag)}</code>`)}
+                ${compactField('Provider', fmt(model.provider))}
+            </div>
+            ${model.description ? `<div class="px-3 pb-2"><small class="text-muted">${model.description}</small></div>` : ''}`;
+        }
+
+        function renderPromptTechnique(pt) {
+            if (!pt) { document.getElementById('promptTechniqueBody').innerHTML = emptyMsg('prompt technique'); return; }
+            document.getElementById('promptTechniqueBody').innerHTML = `<div class="compact-fields">
+                ${compactField('Name', `<strong>${fmt(pt.techniqueName)}</strong>`)}
+                ${compactField('Version', fmt(pt.promptVersion))}
+            </div>
+            ${pt.description ? `<div class="px-3 pb-2"><small class="text-muted">${pt.description}</small></div>` : ''}`;
+        }
+
+        function renderTranscript(tr) {
+            if (!tr) { document.getElementById('transcriptBody').innerHTML = emptyMsg('transcript'); return; }
+            document.getElementById('transcriptBody').innerHTML = `<div class="compact-fields">
+                ${compactField('ID', fmt(tr.transcriptId))}
+                ${compactField('Reel ID', fmt(tr.reelId))}
+                ${compactField('File', `<code>${fmt(tr.fileName)}</code>`)}
+                ${compactField('Consistent', fmtBool(tr.audioTranscriptConsistent))}
+                ${tr.verifiedByName ? compactField('Verified By', `${tr.verifiedByName} (${tr.verifiedByMatric})`) : ''}
+            </div>`;
+        }
+
+        function renderReel(reel) {
+            if (!reel) { document.getElementById('reelBody').innerHTML = emptyMsg('reel'); return; }
+            document.getElementById('reelBody').innerHTML = `<div class="compact-fields">
+                ${compactField('ID', fmt(reel.reelId))}
+                ${compactField('Instagram', `<code>${fmt(reel.reelIdInstagram)}</code>`)}
+                ${compactField('URL', fmtLink(reel.reelUrl, 'Open on Instagram'))}
+                ${compactField('Identified By', reel.identifiedByName || fmt(null))}
+            </div>`;
+        }
+
+        function renderAudioFile(af) {
+            if (!af) { document.getElementById('audioFileBody').innerHTML = emptyMsg('audio file'); return; }
+            document.getElementById('audioFileBody').innerHTML = `<div class="compact-fields">
+                ${compactField('ID', fmt(af.audioId))}
+                ${compactField('File', `<code>${fmt(af.fileName)}</code>`)}
+                ${compactField('Size', af.fileSizeBytes ? (af.fileSizeBytes / 1024).toFixed(1) + ' KB' : '—')}
+                ${compactField('Consistent', fmtBool(af.reelAudioConsistent))}
+                ${af.verifiedByName ? compactField('Verified By', `${af.verifiedByName}`) : ''}
+            </div>`;
+        }
+
+        function renderInfluencer(inf) {
+            if (!inf) { document.getElementById('influencerBody').innerHTML = emptyMsg('influencer'); return; }
+            document.getElementById('influencerBody').innerHTML = `<div class="compact-fields">
+                ${compactField('Name', `<strong>${fmt(inf.name)}</strong>`)}
+                ${compactField('Instagram', `@${fmt(inf.instagramAccount)}`)}
+                ${compactField('Profile', fmtLink(inf.instagramUrl, 'Open'))}
+            </div>`;
+        }
+
+        function renderNutrition(nutritionWithIngredients) {
+            const container = document.getElementById('nutritionBody');
+            if (!nutritionWithIngredients || nutritionWithIngredients.length === 0) {
+                container.innerHTML = emptyMsg('nutrition results');
+                return;
+            }
+
+            let html = '';
+            nutritionWithIngredients.forEach((item, idx) => {
+                const nr = item.nutritionResult;
+                const ingredients = item.ingredients || [];
+                const isValid = nr.jsonValid !== false;
+
+                html += `
+                <div class="border-bottom p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="mb-0 fw-bold">
+                            <i class="fa-solid fa-utensils text-success me-2"></i>
+                            ${nr.recipeName || 'Result #' + nr.resultId}
+                            <span class="badge ${isValid ? 'bg-success' : 'bg-danger'} ms-2" style="font-size:0.72rem">${isValid ? 'Valid JSON' : 'Invalid JSON'}</span>
+                        </h6>
+                        <span class="text-muted small">${nr.processingTimeMs != null ? (nr.processingTimeMs / 1000).toFixed(1) + 's' : ''}</span>
+                    </div>
+
+                    <div class="row g-2 mb-2">
+                        <div class="col-md-2"><div class="detail-label">Servings</div><div class="detail-value">${fmt(nr.servingsEstimated)}</div></div>
+                        <div class="col-md-2"><div class="detail-label">Calories</div><div class="detail-value fw-bold">${nr.totalCalories != null ? nr.totalCalories + ' kcal' : '—'}</div></div>
+                        <div class="col-md-2"><div class="detail-label">Protein</div><div class="detail-value">${nr.totalProteinG != null ? nr.totalProteinG + ' g' : '—'}</div></div>
+                        <div class="col-md-2"><div class="detail-label">Fat</div><div class="detail-value">${nr.totalFatG != null ? nr.totalFatG + ' g' : '—'}</div></div>
+                        <div class="col-md-2"><div class="detail-label">Carbs</div><div class="detail-value">${nr.totalCarbohydrateG != null ? nr.totalCarbohydrateG + ' g' : '—'}</div></div>
+                        <div class="col-md-2"><div class="detail-label">Fiber</div><div class="detail-value">${nr.totalFiberG != null ? nr.totalFiberG + ' g' : '—'}</div></div>
+                    </div>
+
+                    ${ingredients.length > 0 ? `
+                    <h6 class="fw-bold mt-3 mb-2"><i class="fa-solid fa-list text-primary me-2"></i>Ingredients (${ingredients.length})</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover ingredient-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Original Name</th>
+                                    <th>English Name</th>
+                                    <th>Qty</th>
+                                    <th>Unit</th>
+                                    <th>Cal</th>
+                                    <th>Protein</th>
+                                    <th>Fat</th>
+                                    <th>Carbs</th>
+                                    <th>Halluc.</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${ingredients.map((ing, i) => `
+                                <tr${ing.hallucinated ? ' class="table-warning"' : ''}>
+                                    <td>${i + 1}</td>
+                                    <td>${fmt(ing.nameOriginal || ing.ingredientNameOriginal)}</td>
+                                    <td>${fmt(ing.nameEn || ing.ingredientNameEnglish)}</td>
+                                    <td>${fmt(ing.quantityValue)}</td>
+                                    <td>${fmt(ing.unitOriginal || ing.quantityUnit)}</td>
+                                    <td>${ing.calories != null ? ing.calories : '—'}</td>
+                                    <td>${ing.proteinG != null ? ing.proteinG : '—'}</td>
+                                    <td>${ing.totalFatG != null ? ing.totalFatG : '—'}</td>
+                                    <td>${ing.totalCarbohydrateG != null ? ing.totalCarbohydrateG : '—'}</td>
+                                    <td>${fmtBool(ing.hallucinated)}</td>
+                                </tr>`).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    ` : '<div class="text-muted small fst-italic">No ingredient results.</div>'}
+
+                    ${nr.rawJsonOutput ? `
+                    <details class="mt-2">
+                        <summary class="text-muted small fw-medium" style="cursor:pointer">
+                            <i class="fa-solid fa-code me-1"></i>Raw JSON Output
+                        </summary>
+                        <pre class="bg-light p-2 rounded mt-1" style="font-size:0.8rem; max-height:300px; overflow:auto"><code>${escapeHtml(nr.rawJsonOutput)}</code></pre>
+                    </details>
+                    ` : ''}
+                </div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // --- Comparison View ---
+        function renderComparison(data) {
+            const container = document.getElementById('comparisonBody');
+            if (!data) {
+                container.innerHTML = '<div class="section-empty">No comparison data available.</div>';
+                return;
+            }
+
+            const gtIngredients = data.gtIngredients || [];
+            const aiIngredients = data.aiIngredients || [];
+
+            if (gtIngredients.length === 0 && aiIngredients.length === 0) {
+                container.innerHTML = '<div class="section-empty">No ingredient data to compare. Ground truth may not be populated yet.</div>';
+                return;
+            }
+
+            function ingredientTable(ingredients, type) {
+                if (ingredients.length === 0) return '<div class="text-muted small p-3 text-center">No ingredients found.</div>';
+                return `<div class="table-responsive">
+                    <table class="table table-sm ingredient-table mb-0">
+                        <thead><tr>
+                            <th>#</th><th>Name (Original)</th><th>Name (EN)</th>
+                            <th>Qty</th><th>Unit</th><th>Cal</th><th>Protein</th><th>Fat</th><th>Carbs</th>
+                            ${type === 'ai' ? '<th>Halluc.</th>' : ''}
+                        </tr></thead>
+                        <tbody>
+                        ${ingredients.map((ing, i) => `<tr${type === 'ai' && ing.hallucinated ? ' class="table-warning"' : ''}>
+                            <td>${i + 1}</td>
+                            <td>${fmt(ing.nameOriginal)}</td>
+                            <td>${fmt(ing.nameEn)}</td>
+                            <td>${fmtNum(ing.quantityValue)}</td>
+                            <td>${fmt(type === 'gt' ? ing.unitCulinary : ing.unitOriginal)}</td>
+                            <td>${fmtNum(ing.calories)}</td>
+                            <td>${fmtNum(ing.proteinG)}</td>
+                            <td>${fmtNum(ing.totalFatG)}</td>
+                            <td>${fmtNum(ing.totalCarbohydrateG)}</td>
+                            ${type === 'ai' ? `<td>${fmtBool(ing.hallucinated)}</td>` : ''}
+                        </tr>`).join('')}
+                        </tbody>
+                    </table>
+                </div>`;
+            }
+
+            container.innerHTML = `
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="comparison-panel gt-panel">
+                            <div class="panel-header">
+                                <i class="fa-solid fa-check-double me-2"></i>
+                                Ground Truth (${gtIngredients.length} ingredients)
+                            </div>
+                            ${ingredientTable(gtIngredients, 'gt')}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="comparison-panel ai-panel">
+                            <div class="panel-header">
+                                <i class="fa-solid fa-robot me-2"></i>
+                                AI Predicted (${aiIngredients.length} ingredients)
+                            </div>
+                            ${ingredientTable(aiIngredients, 'ai')}
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        // --- Evaluation Summary ---
+        function renderEvalSummary(data, nutritionWithIngredients) {
+            const container = document.getElementById('evalSummaryBody');
+            
+            // Count from nutrition results
+            let totalIngredients = 0;
+            let hallucinatedCount = 0;
+            let jsonValid = null;
+            
+            if (nutritionWithIngredients && nutritionWithIngredients.length > 0) {
+                const nr = nutritionWithIngredients[0].nutritionResult;
+                jsonValid = nr.jsonValid;
+                const ings = nutritionWithIngredients[0].ingredients || [];
+                totalIngredients = ings.length;
+                hallucinatedCount = ings.filter(i => i.hallucinated === true).length;
+            }
+
+            let gtCount = data ? (data.gtIngredientCount || 0) : 0;
+            let aiCount = data ? (data.aiIngredientCount || 0) : 0;
+            let halCount = data ? (data.hallucinatedCount || hallucinatedCount) : hallucinatedCount;
+
+            container.innerHTML = `
+                <div class="row g-3">
+                    <div class="col-6 col-md-3">
+                        <div class="eval-stat ${jsonValid === true ? 'bg-success bg-opacity-10 border-success' : jsonValid === false ? 'bg-danger bg-opacity-10 border-danger' : ''}">
+                            <div class="stat-value ${jsonValid === true ? 'text-success' : jsonValid === false ? 'text-danger' : 'text-muted'}">
+                                ${jsonValid === true ? '<i class="fa-solid fa-check-circle"></i>' : jsonValid === false ? '<i class="fa-solid fa-times-circle"></i>' : '—'}
+                            </div>
+                            <div class="stat-label">JSON Valid</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="eval-stat">
+                            <div class="stat-value text-primary">${aiCount}</div>
+                            <div class="stat-label">AI Ingredients</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="eval-stat">
+                            <div class="stat-value text-success">${gtCount}</div>
+                            <div class="stat-label">Ground Truth</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="eval-stat ${halCount > 0 ? 'bg-warning bg-opacity-10 border-warning' : ''}">
+                            <div class="stat-value ${halCount > 0 ? 'text-warning' : 'text-muted'}">${halCount}</div>
+                            <div class="stat-label">Hallucinated</div>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.appendChild(document.createTextNode(str));
+            return div.innerHTML;
+        }
+
+        // --- Main load ---
+        async function loadDetail() {
+            const params = new URLSearchParams(window.location.search);
+            const experimentId = params.get('experimentId');
+
+            if (!experimentId) {
+                document.getElementById('loadingState').classList.add('d-none');
+                document.getElementById('errorState').classList.remove('d-none');
+                document.getElementById('errorMessage').textContent = 'No experimentId provided in URL.';
+                return;
+            }
+
+            document.getElementById('pageTitle').innerHTML =
+                `<i class="fa-solid fa-flask text-primary me-2"></i>Experiment #${experimentId}`;
+
+            try {
+                // Load detail + comparison in parallel
+                const [detailResp, compResp] = await Promise.all([
+                    fetch(`/api/llm/experiment-detail/${experimentId}`),
+                    fetch(`/api/llm/comparison/${experimentId}`)
+                ]);
+
+                if (!detailResp.ok) {
+                    throw new Error(`HTTP ${detailResp.status}: ${detailResp.statusText}`);
+                }
+                const data = await detailResp.json();
+                let compData = null;
+                if (compResp.ok) {
+                    compData = await compResp.json();
+                }
+
+                document.getElementById('loadingState').classList.add('d-none');
+                document.getElementById('detailContent').classList.remove('d-none');
+
+                renderExperiment(data.experiment);
+                renderLlmModel(data.llmModel);
+                renderPromptTechnique(data.promptTechnique);
+                renderTranscript(data.transcript);
+                renderReel(data.reel);
+                renderAudioFile(data.audioFile);
+                renderInfluencer(data.influencer);
+                renderNutrition(data.nutritionWithIngredients);
+                renderComparison(compData);
+                renderEvalSummary(compData, data.nutritionWithIngredients);
+
+            } catch (e) {
+                console.error(e);
+                document.getElementById('loadingState').classList.add('d-none');
+                document.getElementById('errorState').classList.remove('d-none');
+                document.getElementById('errorMessage').textContent = 'Error loading experiment detail: ' + e.message;
+            }
+        }
+
+        // Load on page ready
+        document.addEventListener('DOMContentLoaded', loadDetail);
+    </script>
+</body>
+</html>

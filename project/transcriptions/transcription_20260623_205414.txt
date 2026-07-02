@@ -1,0 +1,10 @@
+=== Instagram Audio Transcription ===
+Source URL   : https://www.instagram.com/reel/CnJfCYBr3Al/?igsh=M203d2FjenNxcm15
+Stream URL   : https://instagram.fkul3-5.fna.fbcdn.net/o1/v/t2/f2/m82/AQNbLUv89BZLxAj784v6GN7N3Du1_xscomAWx_PJOolFDT-socM1zNIH_4o3maCHpbFuNXa849FHgOJDVWwMrqzRuoQqbK1WAkdyysE.mp4?_nc_cat=109&_nc_oc=Adry6IWV7Zsk2nmMYgLT8h36DdhdpP6B5bg536q2T7mFFN6VWJ_jwe2dfUsDNNzCZWU&_nc_sid=5e9851&_nc_ht=instagram.fkul3-5.fna.fbcdn.net&_nc_ohc=xnj_HeEa7VMQ7kNvwEMHlnU&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5JTlNUQUdSQU0uQ0xJUFMuQzMuNzIwLmRhc2hfYmFzZWxpbmVfMV92MSIsInhwdl9hc3NldF9pZCI6MTQxOTU3MzY2MjIwMzI1NCwiYXNzZXRfYWdlX2RheXMiOjEyNjIsInZpX3VzZWNhc2VfaWQiOjEwMDk5LCJkdXJhdGlvbl9zIjoyOSwidXJsZ2VuX3NvdXJjZSI6Ind3dyJ9&ccb=17-1&vs=fc07cff6f9bc3fb7&_nc_vs=HBksFQIYT2lnX3hwdl9yZWVsc19wZXJtYW5lbnRfcHJvZC9DRjQxMkE4MDk0NDQzODQzN0I5RTJGRTZEMjlEQjhBM192aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HQ0wzV2hOenNKR1FIZFlFQUItUzhNY3BLbWRCYnFfRUFBQUYVAgLIARIAKAAYABsCiAd1c2Vfb2lsATEScHJvZ3Jlc3NpdmVfcmVjaXBlATEVAAAm7PXx_YfGhQUVAigCQzMsF0A97tkWhysCGBJkYXNoX2Jhc2VsaW5lXzFfdjERAHX-B2XmnQEA&_nc_gid=ipWx76ih6UDusijPIkUAPg&_nc_ss=7a22e&_nc_zt=28&oh=00_Af-YkVeUj_d7W9IdHA9SLkJvPVaAeyHr2VJ6o36cuTHbNg&oe=6A3C6356
+Completed At : 2026-06-23 20:54:14
+Model        : large-v3
+Language     : ms
+Status       : SUCCESS
+=====================================
+
+Dalam bantuan
